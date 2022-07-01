@@ -1,0 +1,3 @@
+데이터 파일명
+original_장소_age_번호
+original_장소_category_번호

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+ 
+<tiles-definitions>
+    <!-- 메뉴 탭 타일즈 -->
+    <definition name="layouts-tiles"         template="/WEB-INF/tiles/tilesLayout.jsp">
+        
+        <!--  <put-attribute name="loadFile"        value="/WEB-INF/tiles/inc/loadFile.jsp" /> -->
+        <put-attribute name="header"           value="/WEB-INF/tiles/inc/header.jsp" />
+        <!--  <put-attribute name="left"            value="/WEB-INF/tiles/inc/left.jsp" /> -->
+        <put-attribute name="body"        value="" />
+        <put-attribute name="footer"        value="/WEB-INF/tiles/inc/footer.jsp" />
+    </definition>
+ 
+    <definition name="/*/*" extends="layouts-tiles">
+    	<put-attribute name="title" value="/WEB-INF/jsp/egovframework/example/{1}/{2}.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/egovframework/example/{1}/{2}.jsp" />
+    </definition>
+ 
+</tiles-definitions>

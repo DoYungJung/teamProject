@@ -10,7 +10,7 @@
 		<result property="useYn" column="use_yn"/>
 		
 		<!-- 필요없는 부분은 제거(Review Table) -->
-		<result property="reviewNo" column="review_no"/>
+		<result property="idx" column="idx"/>
 		<result property="restaurantNo" column="restaurant_no"/>
 		<result property="title" column="title"/>
 		<result property="content" column="content"/>
@@ -26,7 +26,7 @@
 	
 	
 	<!-- 각 쿼리의 내부 SQL 쿼리 수정할 필요 있음 -->
-	<insert id="insertRestaurant" parameterType="restaurantVO">
+	<insert id="insertReview" parameterType="restaurantVO">
 
 			INSERT INTO SAMPLE
 				( ID
@@ -42,7 +42,7 @@
 
 	</insert>
 
-	<update id="updateRestaurant">
+	<update id="updateReview">
 
 			UPDATE SAMPLE
 			SET ID=#{id}
@@ -53,57 +53,70 @@
 
 	</update>
 
-	<delete id="deleteRestaurant">
+	<delete id="deleteReview">
 
 			DELETE FROM SAMPLE
 			WHERE ID=#{id}
 
 	</delete>
+	
+	<!-- 식당 상세 테이블을 조인하여 식당이름을 옆에 붙이자 -->
+	<select id="selectReview" parameterType="restaurantVO" resultMap="restaurant">
 
-	<select id="selectRestaurant" resultMap="restaurant">
-
-			SELECT
-				ID, NAME, DESCRIPTION, USE_YN, REG_USER
-			FROM SAMPLE
-			WHERE ID=#{id}
+			SELECT A.review_no
+				, A.restaurant_no
+				, A.title
+				, A.content
+				, A.writer_name
+				, A.writer_id
+				, A.reg_date
+				, A.mod_date
+				, A.count
+			FROM tbl_review A
+			WHERE 1=1
+			AND A.restaurante_no = #{restaurantNo}
+			ORDER BY A.review_no DESC
+			LIMIT #{firstIndex} #{recordCountPerPage}
 
 	</select>
+	
+	<!-- 상세 식당 테이블과 식당 id로 조인하여 식당이름을 옆에 붙여야한다 -->
+	<!-- 상세 식당 테이블별 리뷰 가져오는 조건 추가 -->
+	<!-- selectRestaurant와 selectRestaurantList간의 페이징처리하는 개수가 다르기 때문에 LIMIT 서로 다르게 수정 필요 -->
+	<select id="selectReviewList" parameterType="restaurantVO" resultType="egovMap">
 
-	<select id="selectRestaurantList" parameterType="restaurantVO" resultType="egovMap">
-
-			SELECT
-				ID, NAME, DESCRIPTION, USE_YN, REG_USER
-			FROM SAMPLE
+			SELECT A.idx
+				, A.restaurant_no
+				, A.title
+				, A.content
+				, A.writer_name
+				, A.writer_id
+				, A.reg_date
+				, A.mod_date
+				, A.count
+			FROM tbl_review A
 			WHERE 1=1
 			<if test="searchKeyword != null and searchKeyword != ''">
-		        <choose>
-		            <when test="searchCondition == 0">
-						AND	ID LIKE '%' || #{searchKeyword} || '%'
-					</when>
-		            <when test="searchCondition == 1">
-						AND	NAME LIKE '%' || #{searchKeyword} || '%'
-					</when>
-				</choose>
+			AND ( A.TITLE LIKE CONCAT('%', #{searchKeyword}, '%'))
 			</if>
-			ORDER BY ID ASC
-			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+			ORDER BY A.idx DESC
+			LIMIT #{firstIndex} #{recordCountPerPage}
+			
 	</select>
-
-	<select id="selectRestaurantListTotCnt" parameterType="restaurantVO" resultType="int">
+	
+	<!-- 상세 식당 페이지의 리뷰의 개수를 가져오는 쿼리 추가 -->
+	<select id="selectReviewListTotCnt" parameterType="restaurantVO" resultType="int">
 
 			SELECT COUNT(*) totcnt
-			FROM SAMPLE
+			FROM tbl_review A
 			WHERE 1=1
 			<if test="searchKeyword != null and searchKeyword != ''">
-		        <choose>
-		            <when test="searchCondition == 0">
-						AND ID LIKE '%' || #{searchKeyword} || '%'
-					</when>
-		            <when test="searchCondition == 1">
-						AND	NAME LIKE '%' || #{searchKeyword} || '%'
-					</when>
-				</choose>
+			AND ( A.title LIKE CONCAT('%', #{searchKeyword}, '%'))
 			</if>
 	</select>
+	
+	
+	
+	
 
 </mapper>

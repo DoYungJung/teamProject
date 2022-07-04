@@ -69,7 +69,7 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 	 * @exception Exception
 	 */
 	@Override
-	public String insertRestaurant(RestaurantVO vo) throws Exception {
+	public String insertReview(RestaurantVO vo) throws Exception {
 		LOGGER.debug(vo.toString());
 
 		/** ID Generation Service */
@@ -77,7 +77,7 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 		vo.setUserId(id);
 		LOGGER.debug(vo.toString());
 
-		restaurantDAO.insertRestaurant(vo);
+		restaurantDAO.insertReview(vo);
 		return id;
 	}
 
@@ -88,8 +88,8 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 	 * @exception Exception
 	 */
 	@Override
-	public void updateRestaurant(RestaurantVO vo) throws Exception {
-		restaurantDAO.updateRestaurant(vo);
+	public void updateReview(RestaurantVO vo) throws Exception {
+		restaurantDAO.updateReview(vo);
 	}
 
 	/**
@@ -99,8 +99,8 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 	 * @exception Exception
 	 */
 	@Override
-	public void deleteRestaurant(RestaurantVO vo) throws Exception {
-		restaurantDAO.deleteRestaurant(vo);
+	public void deleteReview(RestaurantVO vo) throws Exception {
+		restaurantDAO.deleteReview(vo);
 	}
 
 	/**
@@ -110,8 +110,8 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 	 * @exception Exception
 	 */
 	@Override
-	public RestaurantVO selectRestaurant(RestaurantVO vo) throws Exception {
-		RestaurantVO resultVO = restaurantDAO.selectRestaurant(vo);
+	public RestaurantVO selectReview(RestaurantVO vo) throws Exception {
+		RestaurantVO resultVO = restaurantDAO.selectReview(vo);
 		if (resultVO == null)
 			throw processException("info.nodata.msg");
 		return resultVO;
@@ -124,8 +124,8 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 	 * @exception Exception
 	 */
 	@Override
-	public List<?> selectRestaurantList(RestaurantVO searchVO) throws Exception {
-		return restaurantDAO.selectRestaurantList(searchVO);
+	public List<?> selectReviewList(RestaurantVO searchVO) throws Exception {
+		return restaurantDAO.selectReviewList(searchVO);
 	}
 
 	/**
@@ -135,8 +135,8 @@ public class RestaurantServiceImpl extends EgovAbstractServiceImpl implements Re
 	 * @exception
 	 */
 	@Override
-	public int selectRestaurantListTotCnt(RestaurantVO searchVO) {
-		return restaurantDAO.selectRestaurantListTotCnt(searchVO);
+	public int selectReviewListTotCnt(RestaurantVO searchVO) {
+		return restaurantDAO.selectReviewListTotCnt(searchVO);
 	}
 
 }

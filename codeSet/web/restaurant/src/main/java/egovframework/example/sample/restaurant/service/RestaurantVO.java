@@ -37,7 +37,7 @@ public class RestaurantVO extends SampleDefaultVO {
 
 	//private static final long serialVersionUID = 1L;
 	
-	private String reviewNo;
+	private String idx;
 	private String restaurantNo;
 	private String title;  
 	private String content;
@@ -53,11 +53,11 @@ public class RestaurantVO extends SampleDefaultVO {
 	private String useYn;
 	
 	
-	public String getReviewNo() {
-		return reviewNo;
+	public String getIdx() {
+		return idx;
 	}
-	public void setReviewNo(String reviewNo) {
-		this.reviewNo = reviewNo;
+	public void setIdx(String idx) {
+		this.idx = idx;
 	}
 	public String getRestaurantNo() {
 		return restaurantNo;

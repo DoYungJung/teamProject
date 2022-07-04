@@ -41,7 +41,7 @@ public interface RestaurantService {
 	 * @return 등록 결과
 	 * @exception Exception
 	 */
-	String insertRestaurant(RestaurantVO vo) throws Exception;
+	String insertReview(RestaurantVO vo) throws Exception;
 
 	/**
 	 * 글을 수정한다.
@@ -49,7 +49,7 @@ public interface RestaurantService {
 	 * @return void형
 	 * @exception Exception
 	 */
-	void updateRestaurant(RestaurantVO vo) throws Exception;
+	void updateReview(RestaurantVO vo) throws Exception;
 
 	/**
 	 * 글을 삭제한다.
@@ -57,7 +57,7 @@ public interface RestaurantService {
 	 * @return void형
 	 * @exception Exception
 	 */
-	void deleteRestaurant(RestaurantVO vo) throws Exception;
+	void deleteReview(RestaurantVO vo) throws Exception;
 
 	/**
 	 * 글을 조회한다.
@@ -65,7 +65,7 @@ public interface RestaurantService {
 	 * @return 조회한 글
 	 * @exception Exception
 	 */
-	RestaurantVO selectRestaurant(RestaurantVO vo) throws Exception;
+	RestaurantVO selectReview(RestaurantVO vo) throws Exception;
 
 	/**
 	 * 글 목록을 조회한다.
@@ -73,7 +73,7 @@ public interface RestaurantService {
 	 * @return 글 목록
 	 * @exception Exception
 	 */
-	List<?> selectRestaurantList(RestaurantVO searchVO) throws Exception;
+	List<?> selectReviewList(RestaurantVO searchVO) throws Exception;
 
 	/**
 	 * 글 총 갯수를 조회한다.
@@ -81,6 +81,6 @@ public interface RestaurantService {
 	 * @return 글 총 갯수
 	 * @exception
 	 */
-	int selectRestaurantListTotCnt(RestaurantVO searchVO);
+	int selectReviewListTotCnt(RestaurantVO searchVO);
 
 }

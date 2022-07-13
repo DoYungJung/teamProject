@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.sample.restaurant.service.impl.RestaurantMapper">
+
+	<resultMap id="restaurant" type="egovframework.example.sample.restaurant.service.RestaurantVO">
+
+		<result property="userId" column="user_id"/>
+		<result property="userPw" column="user_pw"/>
+		<result property="userNm" column="user_name"/>
+		<result property="useYn" column="use_yn"/>
+		
+		<result property="idx" column="idx"/>
+		<result property="restaurantNo" column="restaurant_no"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="writerNm" column="writer_name"/>
+		<result property="writerId" column="writer_id"/>
+		<result property="regDate" column="reg_date"/>
+		<result property="modDate" column="mod_date"/>
+		<result property="count" column="count"/>
+		
+		<result property="restaurantNm" column="name"/>
+		
+	</resultMap>
+	
+	<resultMap id="machineRunning" type="egovframework.example.sample.restaurant.service.MachineRunningVO">
+		
+		<!-- (MachineRunning Table) -->
+		<result property="restaurantIdx" column="index"/>
+		<result property="restaurantName" column="name"/>
+		<result property="gubun" column="gubun"/>
+		<result property="price" column="price"/>
+		<result property="score" column="score"/>
+		<result property="reviewCount" column="count"/>
+		<result property="menu1" column="menu1"/>
+		<result property="menu2" column="menu2"/>
+		<result property="menu3" column="menu3"/>
+		<result property="menu4" column="menu4"/>
+		<result property="address" column="address"/>
+		<result property="phone" column="phone"/>
+		<result property="openingHour" column="openingHour"/>
+		<result property="detailInfo" column="detailInfo"/>
+		
+	</resultMap>
+	
+	
+	
+	<insert id="insertReview" parameterType="restaurantVO"> 
+		  
+				INSERT INTO tbl_review
+				( idx
+				  , restaurant_no
+				  , title
+				  , content
+				  , writer_name
+				  , writer_id
+				  , reg_date
+				  , mod_date
+				  , count )
+			VALUES ( NULL
+				  , #{restaurantNo}
+				  , #{title}
+				  , #{content}
+				  , #{writerNm}
+				  , #{writerId} 
+				  , SYSDATE()
+				  , SYSDATE()
+				  , NULL )
+
+	</insert>
+
+	<update id="updateReview">
+
+			UPDATE tbl_review	  
+			SET TITLE = #{title, jdbcType=VARCHAR}
+			, CONTENT = #{content, jdbcType=VARCHAR}
+			, MOD_DATE = SYSDATE()
+			  WHERE idx = #{idx}
+
+	</update>
+	
+	<update id="updateReviewCount">
+	
+			UPDATE tbl_review
+			SET COUNT = IFNULL(COUNT, 0)+1
+			WHERE idx = #{idx}
+			
+	</update>
+
+
+	<delete id="deleteReview"> 
+
+			DELETE FROM tbl_review
+			WHERE 1=1
+			and idx = #{idx}
+			and restaurant_no = #{restaurantNo}
+
+	</delete>
+	
+	<select id="selectReview" parameterType="restaurantVO" resultMap="restaurant">
+
+		    SELECT C.*, D.name
+			FROM(	      
+			 	SELECT A.idx
+				   , A.restaurant_no
+				   , A.TITLE
+				   , A.CONTENT
+				   , B.user_name AS writer_name
+				   , B.user_id AS writer_id
+				   , A.REG_DATE
+				   , A.MOD_DATE
+				   , A.COUNT as count
+				   , B.user_id
+				   FROM tbl_review A
+				   LEFT JOIN tbl_user B
+				   ON A.writer_id = B.user_id
+			) C
+			LEFT JOIN final_total_data D
+			ON C.restaurant_no = D.index
+			WHERE C.idx= #{idx}
+
+	</select>
+	
+	<!-- 상세 식당 테이블과 식당 id로 조인하여 식당이름을 옆에 붙여야한다 -->
+	<!-- 상세 식당 테이블별 리뷰 가져오는 조건 추가 -->
+	<!-- selectRestaurant와 selectRestaurantList간의 페이징처리하는 개수가 다르기 때문에 LIMIT 서로 다르게 수정 필요 -->
+	<select id="selectReviewList" parameterType="restaurantVO" resultType="egovMap">
+
+		SELECT A.idx
+			, A.restaurant_no AS restaurantNo
+			, A.title 
+			, A.content 
+			, A.writer_name AS writerNm
+			, A.writer_id AS writerId
+			, A.reg_date AS regDate
+			, A.mod_date AS modDate
+			, IFNULL(A.count, 0) AS count 
+			, B.name as restaurantNm
+		FROM tbl_review A
+		LEFT JOIN final_total_data B
+		ON A.restaurant_no = B.index
+		WHERE 1=1
+		<if test="restaurantNo != null and restaurantNo != ''">
+			AND A.restaurant_no = #{restaurantNo}
+		</if>
+		<if test="searchCondition != null and searchCondition != '' and searchCondition =='content' ">
+			AND (A.content LIKE CONCAT('%', #{searchKeyword}, '%'))
+		</if>
+		<if test="searchCondition != null and searchCondition != '' and searchCondition =='restaurantNm' ">
+			AND (B.name LIKE CONCAT('%', #{searchKeyword}, '%'))
+		</if>
+		<if test="searchCondition != null and searchCondition != '' and searchCondition =='writerNm' ">
+			AND (A.writer_name LIKE CONCAT('%', #{searchKeyword}, '%'))
+		</if>
+		ORDER BY A.idx DESC
+		LIMIT #{firstIndex}, #{recordCountPerPage}
+			
+	</select>
+	
+	
+	
+	
+	<select id="selectRestaurantNm" parameterType="restaurantVO" resultType="String">
+
+			SELECT name as restaurantNm
+			FROM final_total_data A
+			WHERE A.INDEX = #{restaurantNo}
+
+	</select>
+	
+	
+	
+	
+	<!-- 상세 식당 페이지의 리뷰의 개수를 가져오는 쿼리 추가 -->
+	<select id="selectReviewListTotCnt" parameterType="restaurantVO" resultType="int">
+
+			<!-- 기존쿼리 SELECT COUNT(*) totcnt
+			FROM tbl_review A
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+			AND ( A.title LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
+			<if test="restaurantNo != null and restaurantNo != ''">
+			AND A.restaurant_no = #{restaurantNo}
+			</if> -->
+			
+			SELECT COUNT(*) totcnt
+			FROM tbl_review A
+			LEFT JOIN final_total_data B
+			ON A.restaurant_no = B.index
+			WHERE 1=1
+			<if test="restaurantNo != null and restaurantNo != ''">
+			AND A.restaurant_no = #{restaurantNo}
+			</if>
+			<if test="searchCondition != null and searchCondition != '' and searchCondition =='content' ">
+			AND (A.content LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
+			<if test="searchCondition != null and searchCondition != '' and searchCondition =='restaurantNm' ">
+			AND (B.name LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
+			<if test="searchCondition != null and searchCondition != '' and searchCondition =='writerNm' ">
+			AND (A.writer_name LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
+			
+	</select>
+	
+	
+	
+   <select id="selectLoginCheck" parameterType="restaurantVO" resultType="String">
+  
+      SELECT A.USER_NAME
+      FROM tbl_user A
+      WHERE 1=1
+      AND A.USER_ID = #{userId}
+      AND A.USER_PW = #{userPw}
+      
+   </select>
+   
+   
+   
+   <!-- 메인페이지 머신러닝 조회 -->
+   <select id="selectMachineRunningList" parameterType="restaurantVO" resultType="egovMap">
+	
+				SELECT C.restaurantIdx
+						, C.restaurantName
+						, C.gubun
+						, C.price
+						, C.menu1
+						, C.menu2
+						, C.menu3
+						, C.menu4
+						, C.address
+						, C.phone
+						, C.openingHour
+						, C.detailInfo
+						, C.score
+						, D.img_path as imgPath
+				from(
+					SELECT A.index as restaurantIdx
+										, A.name as restaurantName
+										, A.gubun
+										, A.price
+										, A.menu1
+										, A.menu2
+										, A.menu3
+										, A.menu4
+										, A.address
+										, A.phone
+										, A.openingHour
+										, A.detailInfo
+										, B.score_weighted as score
+									<if test="options == 2">
+									FROM  premium A
+									</if>
+									<if test="options == 1">
+									FROM  cheapGood A
+									</if>
+									LEFT JOIN score_info B
+									ON A.index = B.index
+				)C
+				LEFT JOIN restaurant_img_path D
+				ON C.restaurantIdx = D.index
+				ORDER BY C.score desc
+				LIMIT #{firstIndex}, #{recordCountPerPage}
+				
+	</select>
+	
+	
+	<!-- 메인페이지 default 조회 -->
+   <select id="selectTotalList" parameterType="restaurantVO" resultType="egovMap">
+			
+				SELECT C.restaurantIdx
+						, C.restaurantName
+						, C.gubun
+						, C.price
+						, C.menu1
+						, C.menu2
+						, C.menu3
+						, C.menu4
+						, C.address
+						, C.phone
+						, C.openingHour
+						, C.detailInfo
+						, C.score
+						, D.img_path as imgPath
+				from(
+					SELECT A.index as restaurantIdx
+										, A.name as restaurantName
+										, A.gubun
+										, A.price
+										, A.menu1
+										, A.menu2
+										, A.menu3
+										, A.menu4
+										, A.address
+										, A.phone
+										, A.openingHour
+										, A.detailInfo
+										, B.score_weighted as score
+									FROM  final_total_data A
+									LEFT JOIN score_info B
+									ON A.index = B.index
+				)C
+				LEFT JOIN restaurant_img_path D
+				ON C.restaurantIdx = D.index
+				LIMIT #{firstIndex}, #{recordCountPerPage}
+
+	</select>
+	
+	
+	
+	
+	<select id="selectRestaurant" parameterType="restaurantVO" resultMap="machineRunning">
+
+			SELECT A.index,
+			REPLACE(A.name,'none','') AS NAME,
+			REPLACE(A.gubun,'none','') AS gubun,
+			A.price,
+			REPLACE(A.menu1,'none','') AS menu1,
+			REPLACE(A.menu2,'none','') AS menu2,
+			REPLACE(A.menu3,'none','') AS menu3,
+			REPLACE(A.menu4,'none','') AS menu4,
+			REPLACE(A.address,'none','') AS address,
+			REPLACE(A.phone,'none','') AS phone,
+			REPLACE(A.openingHour,'none','') AS openingHour,
+			REPLACE(A.detailInfo,'none','') AS detailInfo,
+			B.score_weighted as score
+			FROM final_total_data A
+			LEFT JOIN score_info B
+			ON A.index = B.index
+			WHERE 1=1
+			AND A.index = #{restaurantNo}
+
+	</select>
+	
+	<!-- 모든 식당 페이지의 리뷰의 개수를 가져오는 쿼리 추가 -->
+	<select id="selectRestaurantListTotCnt" resultType="int">
+
+			SELECT COUNT(*) totcnt
+			FROM final_total_data A
+			WHERE 1=1
+			
+	</select>
+	
+	
+	<!-- 머신러닝 결과 식당 페이지의 리뷰의 개수를 가져오는 쿼리 추가 -->
+	<select id="selectMachineRunningListTotCnt" parameterType="restaurantVO" resultType="int">
+
+			SELECT COUNT(*) totcnt
+			<if test="options == 2">
+			FROM  premium A
+			</if>
+			<if test="options == 1">
+			FROM  cheapGood A
+			</if>
+			WHERE 1=1
+			
+	</select>
+   
+   
+   
+   
+   
+   
+   
+	
+	
+
+</mapper>

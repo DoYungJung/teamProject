@@ -237,26 +237,26 @@
 						, D.img_path as imgPath
 				from(
 					SELECT A.index as restaurantIdx
-										, A.name as restaurantName
-										, A.gubun
-										, A.price
-										, A.menu1
-										, A.menu2
-										, A.menu3
-										, A.menu4
-										, A.address
-										, A.phone
-										, A.openingHour
-										, A.detailInfo
-										, B.score_weighted as score
-									<if test="options == 2">
-									FROM  premium A
-									</if>
-									<if test="options == 1">
-									FROM  cheapGood A
-									</if>
-									LEFT JOIN score_info B
-									ON A.index = B.index
+						, A.name as restaurantName
+						, A.gubun
+						, A.price
+						, A.menu1
+						, A.menu2
+						, A.menu3
+						, A.menu4
+						, A.address
+						, A.phone
+						, A.openingHour
+						, A.detailInfo
+						, B.score_weighted as score
+					<if test="options == 2">
+					FROM  premium A
+					</if>
+					<if test="options == 1">
+					FROM  cheapGood A
+					</if>
+					LEFT JOIN score_info B
+					ON A.index = B.index
 				)C
 				LEFT JOIN restaurant_img_path D
 				ON C.restaurantIdx = D.index
@@ -285,21 +285,21 @@
 						, D.img_path as imgPath
 				from(
 					SELECT A.index as restaurantIdx
-										, A.name as restaurantName
-										, A.gubun
-										, A.price
-										, A.menu1
-										, A.menu2
-										, A.menu3
-										, A.menu4
-										, A.address
-										, A.phone
-										, A.openingHour
-										, A.detailInfo
-										, B.score_weighted as score
-									FROM  final_total_data A
-									LEFT JOIN score_info B
-									ON A.index = B.index
+						, A.name as restaurantName
+						, A.gubun
+						, A.price
+						, A.menu1
+						, A.menu2
+						, A.menu3
+						, A.menu4
+						, A.address
+						, A.phone
+						, A.openingHour
+						, A.detailInfo
+						, B.score_weighted as score
+					FROM  final_total_data A
+					LEFT JOIN score_info B
+					ON A.index = B.index
 				)C
 				LEFT JOIN restaurant_img_path D
 				ON C.restaurantIdx = D.index

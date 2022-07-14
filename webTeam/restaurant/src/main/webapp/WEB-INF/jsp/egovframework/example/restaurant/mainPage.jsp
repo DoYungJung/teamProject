@@ -148,7 +148,7 @@ div {
 }
 
 .aaa {
-	width: 1300px;
+	width: 100%;
 	height: 400px;
 	background: rgba(0, 0, 0, 0.3);
 	background-image: url("/images/egovframework/cmmn/background.png");
@@ -156,7 +156,7 @@ div {
 }
 
 .bbb {
-	width: 1300px;
+	width: 100%;
 	height: 400px;
 	padding: 30px;
 	text-align: center;

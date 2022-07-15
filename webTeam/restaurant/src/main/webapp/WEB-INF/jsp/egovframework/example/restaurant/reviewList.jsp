@@ -62,7 +62,6 @@
                         <th>No</th>
                         <th>리뷰아이디</th>
                         <th>내용</th>
-                        <!-- <th>조회수</th> -->
                         <th>가게명</th>
                         <th>등록자Nm</th>
                         <th>등록자ID</th>
@@ -91,8 +90,7 @@
                         
                         </tr>
                      </c:forEach>
-         			</from>
-                     <!-- </from>-->
+         	     </from>
                   </tbody>
                </table>
             </div>
@@ -100,12 +98,12 @@
          <div class="panel-footer py-2 align=right">
          </div>
       </div>
-      <!-- 페이징처리 -->
+     
       <div id="paging" style="text-align: center;">
          <ui:pagination paginationInfo="${paginationInfo}" type="image" jsFunction="page" />
          <form:hidden path="pageIndex" />
       </div>
-      <!-- 페이징처리-->
+     
       <div id="footerExtraArea" class="py-5"></div>
    </div>
 
@@ -155,14 +153,13 @@
     	   
        }
        
-        /* pagination 페이지 링크 function */
         function pageTest(pageNo){
            document.listForm.pageIndex.value = pageNo;
            document.listForm.action = "<c:url value='/mainList.do'/>";
               document.listForm.submit();
         }
 
-       function searchCheck(){  //검색필터체크
+       function searchCheck(){ 
            if($("#searchKeyword").val() == "" || $("#searchKeyword").val() == null ){
               alert("검색키워드를을 입력하세요");
               return false;

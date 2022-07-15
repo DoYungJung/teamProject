@@ -123,7 +123,7 @@
 	    </div>
 		</div>
 		
-	</div><!-- 컨테이너끝 -->
+	</div>
 	
 	<div id="extraFooterArea" class="py-5"></div>
 </c:if>	
